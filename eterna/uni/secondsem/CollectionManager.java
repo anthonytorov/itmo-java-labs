@@ -1,21 +1,30 @@
 package eterna.uni.secondsem;
 
-import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class CollectionManager {
     
     private LinkedList<Person> list;
+    public LinkedList<Person> get_list() { return list; }
     private String path;
     private Date initializationDate;
+    public Date get_initializationDate() { return initializationDate; }
 
     public CollectionManager(String _path) {
         list = new LinkedList<Person>();
         initializationDate = new Date();
         path = _path;
+    }
+
+    public String getAbsoluteCollectionDirectory() {
+        return (new File(path)).getParentFile().getAbsolutePath();
     }
 
     public void load() {
@@ -27,10 +36,14 @@ public class CollectionManager {
     }
 
     public void clear() {
+        for (Person person : list) {
+            person.unregister();
+        }
         list.clear();
     }
 
     public void add(Person person) {
+        person.register();
         list.add(person);
         list.sort(null);
     }
@@ -42,18 +55,10 @@ public class CollectionManager {
         return 0;
     }
 
-    public boolean update(Integer id, Person other) {
-        Person person = fetch(id);
-        if (person == null) return false;
-
-        person.copyDataFrom(other);
-        list.sort(null);
-        return true;
-    }
-
     public boolean remove(Integer id) {
         Person person = fetch(id);
         if (person != null) {
+            person.unregister();
             list.remove(person);
             return true;
         }
@@ -68,18 +73,15 @@ public class CollectionManager {
         return null;
     }
 
-    public void show() {
+    public void shuffle() {
         for (Person person : list) {
-            Logger.log(person.toString());
+            person.unregister();
         }
-    }
-
-    public String getInformationString() {
-        return String.join("\n",
-            "Collection type : " + list.getClass().toString(),
-            "Initialization date : " + initializationDate.toString(),
-            "Size : " + list.size()
-        );
+        Collections.shuffle(list);
+        for (Person person : list) {
+            person.register();
+        }
+        list.sort(null);
     }
 
     private static class CollectionLoader {
@@ -89,7 +91,13 @@ public class CollectionManager {
                 while (lineScanner.hasNextLine()) {
                     Scanner csvScanner = new Scanner(lineScanner.nextLine());
                     csvScanner.useDelimiter(",");
-                    collection.add(readPerson(csvScanner));
+                    
+                    Person person = readPerson(csvScanner);
+                    if (person != null) {
+                        person.register();
+                        collection.add(person);
+                    }
+                    
                     csvScanner.close();
                 }
                 lineScanner.close();
@@ -97,27 +105,36 @@ public class CollectionManager {
         }
 
         private static Person readPerson(Scanner csvScanner) {
-            String _name = csvScanner.next();
-            return new Person(_name);
+            Person person = new Person("", new Coordinates(), 0, Country.ITALY, new Location(0f, 0d, 0d, "Unnamed"));
+            try {
+                person.readFromCSVLine(csvScanner);
+
+                if (csvScanner.hasNext()) {
+                    throw new IOException("Encountered more entries in line than expected!");
+                }
+
+                return person;
+            } catch (IOException ioex) {
+                LogPrinter.logException(ioex);
+                LogPrinter.log("Skipping entry...");
+            }
+            return null;
         }
         
 
         public static void saveCollectionToFile(Collection<Person> collection, String path) {
             PrintWriter writer = AppManager.tryCreateWriter(path);
             
+            if (writer == null) {
+                LogPrinter.log("Unable to write to file " + path);
+            }
+
             for (Person person : collection) {
-                writePersonToCSV(writer, person);
+                writer.println(person.toCSVString());
             }
             
             writer.flush();
             writer.close();
-        }
-
-        private static void writePersonToCSV(PrintWriter writer, Person person) {
-            writer.write(String.join(
-                ",",
-                person.get_name()
-            ));
         }
     }
 }

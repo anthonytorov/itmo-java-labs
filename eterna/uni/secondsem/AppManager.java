@@ -4,121 +4,96 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import eterna.uni.secondsem.commands.*;
 
 public class AppManager {
 
-    private static CollectionManager collection;
+    private static AppManager instance;
+
+    public CollectionManager collectionManager;
+    public InputManager input;
+
+    public boolean applicationRunning;
     
     public static void start(String filepath) {
-        collection = new CollectionManager(filepath);
-        collection.load();
-
-        while (processCommand(System.console().readLine().split(" ")));
-
-        Logger.log("Quitting application...");
+        if (instance != null) return;
+        instance = new AppManager(filepath);
+        instance.run();
     }
 
-    private static boolean processCommand(String[] cmdArguments) {
+    private AppManager(String filepath) {
+        collectionManager = new CollectionManager(filepath);
+        collectionManager.load();
+        LogPrinter.log(String.format("Loaded %d elements from file.", collectionManager.get_list().size()));
 
-        if (cmdArguments.length == 0) {
-            Logger.log("Please enter command!");
-            return true;
+        input = new InputManager();
+        input.registerCommand(new CommandHelp());
+        input.registerCommand(new CommandInfo());
+        input.registerCommand(new CommandShow());
+        input.registerCommand(new CommandAdd());
+        input.registerCommand(new CommandUpdate());
+        input.registerCommand(new CommandRemove());
+        input.registerCommand(new CommandClear());
+        input.registerCommand(new CommandSave());
+        input.registerCommand(new CommandExecuteScript());
+        input.registerCommand(new CommandExit());
+        input.registerCommand(new CommandAddIfMax());
+        input.registerCommand(new CommandAddIfMin());
+        input.registerCommand(new CommandShuffle());
+        input.registerCommand(new CommandCountByHairColor());
+        input.registerCommand(new CommandFilterLessThanLocation());
+        input.registerCommand(new CommandPrintFieldDescendingNationality());
+    }
+
+    private void run() {
+        applicationRunning = true;
+        while (applicationRunning) {
+            processCommand();
         }
+        LogPrinter.log("Quitting application...");
+    }
 
-        switch (cmdArguments[0]) {
-            default:
-                Logger.log("Unknown command...");
-                break;
-            case "help":
-                Logger.logCommandsHelp();
-                break;
-            case "info":
-                Logger.log(collection.getInformationString());
-                break;
-            case "show":
-                collection.show();
-                break;
-            case "add": 
-                collection.add(promptPersonInConsole());
-                Logger.log("Added a new entry to collection.");
-                break;
-            case "update":
-                if (cmdArguments.length > 1) {
-                    try {
-                        Integer id = new Integer(cmdArguments[1]);
-                        if (id <= 0) throw new NumberFormatException();
+    private boolean processCommand() {
+        
+        Command command = input.readCommandFromConsole();
+        if (command == null) return true;
+        
+        command.invoke(this);
 
-                        collection.update(id, promptPersonInConsole());   
-                        Logger.log("Updated entry " + id);
-                    }
-                    catch (NumberFormatException nfex) {
-                        Logger.log("Please enter a valid id integer!");
-                    }
-                } else {
-                    Logger.log("Please enter id of the entry you'd like to update!");
-                }
-                break;
-            case "remove_by_id":
-                if (cmdArguments.length > 1) {
-                    try {
-                        Integer id = new Integer(cmdArguments[1]);
-                        if (id <= 0) throw new NumberFormatException();
-
-                        collection.remove(id);
-                        Logger.log("Removed entry " + id + " from collection.");
-                    }
-                    catch (NumberFormatException nfex) {
-                        Logger.log("Please enter a valid id integer!");
-                    }
-                } else {
-                    Logger.log("Please enter id of the entry you'd like to update!");
-                }
-
-                break;
-            case "clear":
-                collection.clear();
-                Logger.log("Emptied the loaded collection.");
-                break;
-            case "save":
-                collection.save();
-                Logger.log("Saved collection to file");
-                break;
-            case "exit":
-                return false;
-            case "add_if_max":
-                Person person = promptPersonInConsole();
-                if (collection.compareToCollectionBounds(person) > 0) {
-                    collection.add(person);
-                }
-                break;
-            case "add_if_min":
-                person = promptPersonInConsole();
-                if (collection.compareToCollectionBounds(person) < 0) {
-                    collection.add(person);
-                }
-                break;
-        }
         return true;
     }
 
-    private static Person promptPersonInConsole() {
-        Logger.log("Assembling instance of Person:\nEnter name: ");
-        String _name = System.console().readLine();
-        
-        return new Person(_name);
-    } 
+    public boolean siphonInputFromFile(String filepath) {
+        Scanner inputScanner = AppManager.tryScanFile(filepath);
+        if (inputScanner == null) return false;
+
+        while (inputScanner.hasNextLine()) {
+            Command command = input.convertLineToCommand(inputScanner.nextLine());
+            try {
+                command.invoke(this);
+            } catch (Exception ex) {
+                LogPrinter.logException(ex);
+                break;
+            }
+        }
+
+        return true;
+    }
 
     public static Scanner tryScanFile(String path) {
         try {
             File dbfile = new File(path);
-            if (dbfile.exists()) {
-                return new Scanner(dbfile);        
-            } else {
-                dbfile.createNewFile();
-                return new Scanner(dbfile);
+            if (!dbfile.exists()) {
+                dbfile = new File(instance.collectionManager.getAbsoluteCollectionDirectory() + "\\" + path);
+                if (!dbfile.exists()) {
+                    dbfile.createNewFile();
+                }
             }
+            return new Scanner(dbfile);
         } catch (IOException ioex) {
-            Logger.log("An I/O exception occured.");
+            LogPrinter.log("An I/O exception occured while reading " + path);
+        } catch (SecurityException securityException) {
+            LogPrinter.log("A security exception occurred while writing to " + path);
         }
 
         return null;
@@ -127,14 +102,14 @@ public class AppManager {
     public static PrintWriter tryCreateWriter(String path) {
         try {
             File dbfile = new File(path);
-            if (dbfile.exists()) {
-                return new PrintWriter(dbfile);        
-            } else {
+            if (!dbfile.exists()) {
                 dbfile.createNewFile();
-                return new PrintWriter(dbfile);
             }
+            return new PrintWriter(dbfile);
         } catch (IOException ioex) {
-            Logger.log("An I/O exception occured.");
+            LogPrinter.log("An I/O exception occured while reading " + path);
+        } catch (SecurityException securityException) {
+            LogPrinter.log("A security exception occurred while writing to " + path);
         }
         return null;
     }
