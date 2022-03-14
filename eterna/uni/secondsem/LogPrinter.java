@@ -44,10 +44,10 @@ public class LogPrinter {
      */
     public static String getDescriptionFor(String commandKey) throws UnsupportedOperationException {
         switch (commandKey) {
-            case "exit":
-                return "quits the application (without saving)";
             case "help":
                 return "prints this message";
+            case "info":
+                return "prints information about the stored collection";
             case "show":
                 return "displays the contents of the collection";
             case "add":
@@ -62,6 +62,8 @@ public class LogPrinter {
                 return "saves the collection to file";
             case "execute_script":
                 return "executes commands read from a specified file";
+            case "exit":
+                return "quits the application (without saving)";
             case "add_if_max":
                 return "prompts for a new Person instance, and adds it if it wins the comparison against every Person in collection";
             case "add_if_min":

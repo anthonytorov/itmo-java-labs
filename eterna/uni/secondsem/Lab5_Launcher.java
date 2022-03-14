@@ -6,8 +6,11 @@ package eterna.uni.secondsem;
  */
 public class Lab5_Launcher {
     public static void main(String[] args) {
-        System.out.println("Lab5 online.");
-        String path = "C:\\Users\\eterna dark\\Documents\\GitHub\\itmo-java-labs\\personDatabase.csv";
-        AppManager.start(path);
+        if (args.length == 0) {
+            System.out.println("Please enter a file path!");
+        } else {
+            System.out.println("Lab5 online.");
+            AppManager.start(args[0]);
+        }
     }
 }

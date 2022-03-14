@@ -97,10 +97,7 @@ public class AppManager {
         try {
             File dbfile = new File(path);
             if (!dbfile.exists()) {
-                dbfile = new File(instance.collectionManager.getAbsoluteCollectionDirectory() + "\\" + path);
-                if (!dbfile.exists()) {
-                    dbfile.createNewFile();
-                }
+                dbfile.createNewFile();
             }
             return new Scanner(dbfile);
         } catch (IOException ioex) {
