@@ -4,8 +4,16 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Location implements CSVFormattable, Comparable<Location> {
+    /**
+     * Cannot be null
+     */
     private Float x;
     public Float get_x() { return x; }
+    /**
+     * Sets new value of x to be value, unless value is null.
+     * @param value new value of x. cannot be null.
+     * @throws IllegalArgumentException if value is null
+     */
     public void set_x(Float value) throws IllegalArgumentException {
         if (value == null) throw new IllegalArgumentException("Value can't be null!");
         x = value;
@@ -19,8 +27,16 @@ public class Location implements CSVFormattable, Comparable<Location> {
     public double get_z() { return z; }
     public void set_z(double value) { z = value; }
 
+    /**
+     * Cannot be longer than 238, but can be null.
+     */
     private String name;
     public String get_name() { return name; }
+    /**
+     * Sets new name to be value, unless value is longer than 238 symbols.
+     * @param value new value of name (cannot be longer than 238, but can be null)
+     * @throws IllegalArgumentException if value is longer than 238 symbols
+     */
     public void set_name(String value) throws IllegalArgumentException {
         if (value != null && value.length() > 238) throw new IllegalArgumentException("Location name can't be longer than 238 characters!");
         name = value;
@@ -41,7 +57,7 @@ public class Location implements CSVFormattable, Comparable<Location> {
             z = csvScanner.nextDouble();
 
             if (csvScanner.hasNext()) {
-                set_name(csvScanner.next());
+                set_name(Sanitizer.unsanitizeString(csvScanner.next()));
             } else {
                 set_name(null);
             }

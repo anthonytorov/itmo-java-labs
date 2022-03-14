@@ -1,12 +1,23 @@
 package eterna.uni.secondsem;
 
 import java.text.SimpleDateFormat;
-
 import java.text.ParseException;
 
+/**
+ * Class for streamlined reading of Person instances from the console.
+ */
 public class ConsolePromptPerson {
+    /**
+     * The instance to read into. Sequentially filled with input values. 
+     */
     public Person person;
+    /**
+     * Current field index.
+     */
     private int height;
+    /**
+     * Total fields in a Person instance.
+     */
     private final int STOP_HEIGHT = 7;
 
     public ConsolePromptPerson(Person _person) {
@@ -20,6 +31,11 @@ public class ConsolePromptPerson {
         while (pushInput(new ConsolePrompt(getFieldPrompt())));
     }
 
+    /**
+     * Requests input for the next field, and writes it into the corresponding field of coords.
+     * @param prompt the console prompt to retrieve input from
+     * @return true if the Person instance is incomplete, otherwise false
+     */
     public boolean pushInput(ConsolePrompt prompt) {
         try {
             switch (height) {
@@ -74,6 +90,9 @@ public class ConsolePromptPerson {
         return true;
     }
 
+    /**
+     * @return a prompt for the field being currently read
+     */
     private String getFieldPrompt() {
         switch (height) {
             default:

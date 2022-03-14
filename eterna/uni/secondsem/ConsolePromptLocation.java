@@ -1,8 +1,20 @@
 package eterna.uni.secondsem;
 
+/**
+ * Class for streamlined reading of Coordinate instances from the console.
+ */
 public class ConsolePromptLocation {
+    /**
+     * The instance to read into. Sequentially filled with input values. 
+     */
     public Location location;
+    /**
+     * Current field index.
+     */
     private int height;
+    /**
+     * Total fields in a Location instance.
+     */
     private final int STOP_HEIGHT = 4;
 
     public ConsolePromptLocation(Location _location) {
@@ -16,6 +28,11 @@ public class ConsolePromptLocation {
         while (pushInput(new ConsolePrompt(getFieldPrompt())));
     }
 
+    /**
+     * Requests input for the next field, and writes it into the corresponding field of location.
+     * @param prompt the console prompt to retrieve input from
+     * @return true if the Location instance is incomplete, otherwise false
+     */
     public boolean pushInput(ConsolePrompt prompt) {
         try {
             String line = prompt.get_output();
@@ -50,6 +67,9 @@ public class ConsolePromptLocation {
         return true;
     }
 
+    /**
+     * @return a prompt for the field being currently read
+     */
     private String getFieldPrompt() {
         switch (height) {
             default:

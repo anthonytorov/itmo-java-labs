@@ -4,8 +4,16 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Coordinates implements CSVFormattable {
-    private int x; // >-21
+    /**
+     * Must be larger than -21.
+     */
+    private int x;
     public int get_x() { return x; }
+    /**
+     * Sets the value of x to be value, unless it's not larger than -21
+     * @param value new value of x
+     * @throws IllegalArgumentException if value is not > -21
+     */
     public void set_x(int value) throws IllegalArgumentException {
         if (!(value > -21)) {
             throw new IllegalArgumentException("x must be > -21!");

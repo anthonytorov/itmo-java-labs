@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+/**
+ * Main class overseeing the LinkedList of Persons
+ */
 public class CollectionManager {
     
     private LinkedList<Person> list;
@@ -23,18 +26,30 @@ public class CollectionManager {
         path = _path;
     }
 
+    /**
+     * @return the absolute path to the directory containing the database file
+     */
     public String getAbsoluteCollectionDirectory() {
         return (new File(path)).getParentFile().getAbsolutePath();
     }
 
+    /**
+     * Loads collection from the active file.
+     */
     public void load() {
         CollectionLoader.loadCollectionFromFile(list, path);
     }
 
+    /**
+     * Saves collection to the active file.
+     */
     public void save() {
         CollectionLoader.saveCollectionToFile(list, path);
     }
 
+    /**
+     * Clears the collection and frees all ids of the contained Person instances.
+     */
     public void clear() {
         for (Person person : list) {
             person.unregister();
@@ -42,12 +57,21 @@ public class CollectionManager {
         list.clear();
     }
 
+    /**
+     * Adds a new person to the collection, and assignes it a new id.
+     * @param person
+     */
     public void add(Person person) {
         person.register();
         list.add(person);
         list.sort(null);
     }
 
+    /**
+     * Compares a new person to all elements inside the collection.
+     * @param person the person to compare to
+     * @return 1 if person is greater than any element in the collection, -1 if less and 0 if person is inside collection bounds.
+     */
     public int compareToCollectionBounds(Person person) {
         if (list.getLast().compareTo(person) < 0) return 1;
         else if (list.getFirst().compareTo(person) > 0) return -1;
@@ -55,6 +79,11 @@ public class CollectionManager {
         return 0;
     }
 
+    /**
+     * Removes Person instance with a specified id from the collection.
+     * @param id the id of the Person to remove
+     * @return true if a person with the specified id was found and removed, otherwise false 
+     */
     public boolean remove(Integer id) {
         Person person = fetch(id);
         if (person != null) {
@@ -65,6 +94,11 @@ public class CollectionManager {
         return false;
     }
 
+    /**
+     * Fetches a person with a specified id from the collection.
+     * @param id id to search for
+     * @return a Person instance if the collection contains element with the specified id, otherwise null
+     */
     public Person fetch(Integer id) {
         for (Person person : list) {
             if (person.get_id().equals(id)) return person;
@@ -73,6 +107,9 @@ public class CollectionManager {
         return null;
     }
 
+    /**
+     * Randomly rearranges entries in the collection by shuffling their ids.
+     */
     public void shuffle() {
         for (Person person : list) {
             person.unregister();
@@ -84,13 +121,21 @@ public class CollectionManager {
         list.sort(null);
     }
 
+    /**
+     * Class responsible for loading and unloading collections from CSV files.
+     */
     private static class CollectionLoader {
+        /**
+         * Loads collection from a specified file using Scanner.
+         * @param collection the collection to load into
+         * @param path path to a CSV file to read from
+         */
         public static void loadCollectionFromFile(Collection<Person> collection, String path) {
             Scanner lineScanner = AppManager.tryScanFile(path);
             if (lineScanner != null) {
                 while (lineScanner.hasNextLine()) {
                     Scanner csvScanner = new Scanner(lineScanner.nextLine());
-                    csvScanner.useDelimiter(",");
+                    csvScanner.useDelimiter("(?<!\\\\),");
                     
                     Person person = readPerson(csvScanner);
                     if (person != null) {
@@ -104,6 +149,11 @@ public class CollectionManager {
             }
         }
 
+        /**
+         * Attempts to read an Person instance from a line of CSV  
+         * @param csvScanner Scanner instance over a line of CSV 
+         * @return if read successfully, Person instance, otherwise null
+         */
         private static Person readPerson(Scanner csvScanner) {
             Person person = new Person("", new Coordinates(), 0, Country.ITALY, new Location(0f, 0d, 0d, "Unnamed"));
             try {
@@ -120,8 +170,12 @@ public class CollectionManager {
             }
             return null;
         }
-        
 
+        /**
+         * Writes a collection to a specified file using PrintWriter. 
+         * @param collection the collection to write from
+         * @param path path to the file to write to
+         */
         public static void saveCollectionToFile(Collection<Person> collection, String path) {
             PrintWriter writer = AppManager.tryCreateWriter(path);
             

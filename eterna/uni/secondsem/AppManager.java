@@ -6,6 +6,9 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import eterna.uni.secondsem.commands.*;
 
+/**
+ * The main class responsible for the application and command handling.
+ */
 public class AppManager {
 
     private static AppManager instance;
@@ -15,6 +18,10 @@ public class AppManager {
 
     public boolean applicationRunning;
     
+    /**
+     * Starts the application. If it's already started, does nothing.
+     * @param filepath path to the csv database file
+     */
     public static void start(String filepath) {
         if (instance != null) return;
         instance = new AppManager(filepath);
@@ -45,24 +52,25 @@ public class AppManager {
         input.registerCommand(new CommandPrintFieldDescendingNationality());
     }
 
+    /**
+     * This function starts the main application loop, and returns only when the application has been aborted.
+     */
     private void run() {
         applicationRunning = true;
         while (applicationRunning) {
-            processCommand();
+            Command command = input.readCommandFromConsole();
+            if (command != null) {
+                command.invoke(this);
+            }
         }
         LogPrinter.log("Quitting application...");
     }
 
-    private boolean processCommand() {
-        
-        Command command = input.readCommandFromConsole();
-        if (command == null) return true;
-        
-        command.invoke(this);
-
-        return true;
-    }
-
+    /**
+     * This function reads a set of instructions from a file, and executes them.
+     * @param filepath path to the script text file.
+     * @return true if the script was successfully executed, otherwise false.  
+     */
     public boolean siphonInputFromFile(String filepath) {
         Scanner inputScanner = AppManager.tryScanFile(filepath);
         if (inputScanner == null) return false;
@@ -80,6 +88,11 @@ public class AppManager {
         return true;
     }
 
+    /**
+     * Attempts to create a Scanner for a file.
+     * @param path path to the file being scanned (must exist)
+     * @return a Scanner instance if successful, otherwise null 
+     */
     public static Scanner tryScanFile(String path) {
         try {
             File dbfile = new File(path);
@@ -99,6 +112,11 @@ public class AppManager {
         return null;
     }
 
+    /**
+     * Attempts to create a PrintWriter for a file.
+     * @param path file being written to - if it exists, it is overwritten
+     * @return a PrintWriter instance if successful, otherwise null
+     */
     public static PrintWriter tryCreateWriter(String path) {
         try {
             File dbfile = new File(path);
