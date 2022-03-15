@@ -25,7 +25,7 @@ public class ConsolePromptCoordinates {
         }
         height = 0;
 
-        while (pushInput(new ConsolePrompt(getFieldPrompt())));
+        while (pushInput(AppManager.getTopPrompter()));
     }
 
     /**
@@ -33,9 +33,12 @@ public class ConsolePromptCoordinates {
      * @param prompt the console prompt to retrieve input from
      * @return true if the Coordinate instance is incomplete, otherwise false
      */
-    public boolean pushInput(ConsolePrompt prompt) {
+    public boolean pushInput(Prompter prompt) {
+        
+        prompt.showPrompt(getFieldPrompt());
+        
         try {
-            String line = prompt.get_output();
+            String line = prompt.getOutput();
             switch (height) {
                 case 0:
                     coords.set_x(Integer.parseInt(line));

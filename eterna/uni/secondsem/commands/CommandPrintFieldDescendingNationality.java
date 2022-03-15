@@ -9,6 +9,10 @@ import eterna.uni.secondsem.Person;
 
 public class CommandPrintFieldDescendingNationality extends Command {
 
+    public CommandPrintFieldDescendingNationality(String[] args) {
+        super(args);
+    }
+
     @Override
     public void invoke(AppManager appManager) {
         LinkedList<Person> list = appManager.collectionManager.get_list();
@@ -20,14 +24,6 @@ public class CommandPrintFieldDescendingNationality extends Command {
         }
 
         list.sort(null);
-    }
-
-    @Override
-    public void configure(String[] arguments) {}
-
-    @Override
-    public String getKey() {
-        return "print_field_descending_nationality";
     }
 
     private class PersonByCountryComparator implements Comparator<Person> {

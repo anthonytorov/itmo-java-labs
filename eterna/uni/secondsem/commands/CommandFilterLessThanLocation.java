@@ -7,6 +7,10 @@ import eterna.uni.secondsem.Person;
 
 public class CommandFilterLessThanLocation extends Command {
 
+    public CommandFilterLessThanLocation(String[] args) {
+        super(args);
+    }
+
     @Override
     public void invoke(AppManager appManager) {
         ConsolePromptLocation prompt = new ConsolePromptLocation(null);
@@ -17,13 +21,4 @@ public class CommandFilterLessThanLocation extends Command {
             }
         }
     }
-
-    @Override
-    public void configure(String[] arguments) {}
-
-    @Override
-    public String getKey() {
-        return "filter_less_than_location";
-    }
-    
 }

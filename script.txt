@@ -1,0 +1,15 @@
+help
+info
+add
+Bobert
+2
+-10
+1.5
+01-01-2022
+
+ITALY
+0
+0
+0
+Milan
+show

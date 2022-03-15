@@ -131,7 +131,7 @@ public class CollectionManager {
          * @param path path to a CSV file to read from
          */
         public static void loadCollectionFromFile(Collection<Person> collection, String path) {
-            Scanner lineScanner = AppManager.tryScanFile(path);
+            Scanner lineScanner = AppManager.tryScanFile(path, false);
             if (lineScanner != null) {
                 while (lineScanner.hasNextLine()) {
                     Scanner csvScanner = new Scanner(lineScanner.nextLine());

@@ -6,19 +6,13 @@ import eterna.uni.secondsem.LogPrinter;
 
 public class CommandAdd extends Command {
 
+    public CommandAdd(String[] args) { super(args); }
+
     @Override
     public void invoke(AppManager appManager) {
         ConsolePromptPerson personPrompt = new ConsolePromptPerson(null);
         appManager.collectionManager.add(personPrompt.person);
         LogPrinter.log("Added the new Person to the collection");
     }
-
-    @Override
-    public String getKey() {
-        return "add";
-    }
-
-    @Override
-    public void configure(String[] arguments) {}
     
 }

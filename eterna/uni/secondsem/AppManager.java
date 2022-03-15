@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+
 import eterna.uni.secondsem.commands.*;
 
 /**
@@ -14,9 +15,13 @@ public class AppManager {
     private static AppManager instance;
 
     public CollectionManager collectionManager;
-    public InputManager input;
+    public CommandGenerator commandGenerator;
 
-    public boolean applicationRunning;
+    private boolean applicationRunning;
+    private ConsolePrompter consolePrompter;
+    private FilePrompter filePrompter;
+
+    public static Prompter getTopPrompter() { return (instance.filePrompter == null) ? instance.consolePrompter : instance.filePrompter; }
     
     /**
      * Starts the application. If it's already started, does nothing.
@@ -33,23 +38,25 @@ public class AppManager {
         collectionManager.load();
         LogPrinter.log(String.format("Loaded %d elements from file.", collectionManager.get_list().size()));
 
-        input = new InputManager();
-        input.registerCommand(new CommandHelp());
-        input.registerCommand(new CommandInfo());
-        input.registerCommand(new CommandShow());
-        input.registerCommand(new CommandAdd());
-        input.registerCommand(new CommandUpdate());
-        input.registerCommand(new CommandRemove());
-        input.registerCommand(new CommandClear());
-        input.registerCommand(new CommandSave());
-        input.registerCommand(new CommandExecuteScript());
-        input.registerCommand(new CommandExit());
-        input.registerCommand(new CommandAddIfMax());
-        input.registerCommand(new CommandAddIfMin());
-        input.registerCommand(new CommandShuffle());
-        input.registerCommand(new CommandCountByHairColor());
-        input.registerCommand(new CommandFilterLessThanLocation());
-        input.registerCommand(new CommandPrintFieldDescendingNationality());
+        consolePrompter = new ConsolePrompter();
+
+        commandGenerator = new CommandGenerator();
+        commandGenerator.registerCommand("help", CommandHelp.class);
+        commandGenerator.registerCommand("info", CommandInfo.class);
+        commandGenerator.registerCommand("show", CommandShow.class);
+        commandGenerator.registerCommand("add", CommandAdd.class);
+        commandGenerator.registerCommand("update", CommandUpdate.class);
+        commandGenerator.registerCommand("remove_by_id", CommandRemove.class);
+        commandGenerator.registerCommand("clear", CommandClear.class);
+        commandGenerator.registerCommand("save", CommandSave.class);
+        commandGenerator.registerCommand("execute_script", CommandExecuteScript.class);
+        commandGenerator.registerCommand("exit", CommandExit.class);
+        commandGenerator.registerCommand("add_if_max", CommandAddIfMax.class);
+        commandGenerator.registerCommand("add_if_min", CommandAddIfMin.class);
+        commandGenerator.registerCommand("shuffle", CommandShuffle.class);
+        commandGenerator.registerCommand("count_by_hair_color", CommandCountByHairColor.class);
+        commandGenerator.registerCommand("filter_less_than_location", CommandFilterLessThanLocation.class);
+        commandGenerator.registerCommand("print_field_descending_nationality", CommandPrintFieldDescendingNationality.class);
     }
 
     /**
@@ -58,9 +65,12 @@ public class AppManager {
     private void run() {
         applicationRunning = true;
         while (applicationRunning) {
-            Command command = input.readCommandFromConsole();
-            if (command != null) {
+            try {        
+                Command command = commandGenerator.generate(System.console().readLine().split(" "));
                 command.invoke(this);
+            } catch (NullPointerException npex) {
+                LogPrinter.log("Could not recognise command!");
+                LogPrinter.logException(npex);
             }
         }
         LogPrinter.log("Quitting application...");
@@ -72,11 +82,13 @@ public class AppManager {
      * @return true if the script was successfully executed, otherwise false.  
      */
     public boolean siphonInputFromFile(String filepath) {
-        Scanner inputScanner = AppManager.tryScanFile(filepath);
+        Scanner inputScanner = AppManager.tryScanFile(filepath, false);
         if (inputScanner == null) return false;
 
+        filePrompter = new FilePrompter(inputScanner);
+
         while (inputScanner.hasNextLine()) {
-            Command command = input.convertLineToCommand(inputScanner.nextLine());
+            Command command = commandGenerator.generate(inputScanner.nextLine().split(" "));
             try {
                 command.invoke(this);
             } catch (Exception ex) {
@@ -84,6 +96,8 @@ public class AppManager {
                 break;
             }
         }
+
+        filePrompter = null;
 
         return true;
     }
@@ -93,10 +107,10 @@ public class AppManager {
      * @param path path to the file being scanned (must exist)
      * @return a Scanner instance if successful, otherwise null 
      */
-    public static Scanner tryScanFile(String path) {
+    public static Scanner tryScanFile(String path, boolean createIfDoesntExist) {
         try {
             File dbfile = new File(path);
-            if (!dbfile.exists()) {
+            if (!dbfile.exists() && createIfDoesntExist) {
                 dbfile.createNewFile();
             }
             return new Scanner(dbfile);
@@ -127,5 +141,9 @@ public class AppManager {
             LogPrinter.log("A security exception occurred while writing to " + path);
         }
         return null;
+    }
+
+    public void quit() {
+        applicationRunning = false;
     }
 }

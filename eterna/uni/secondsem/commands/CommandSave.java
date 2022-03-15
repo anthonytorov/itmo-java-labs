@@ -4,9 +4,8 @@ import eterna.uni.secondsem.AppManager;
 import eterna.uni.secondsem.LogPrinter;
 
 public class CommandSave extends Command {
-    @Override
-    public String getKey() {
-        return "save";
+    public CommandSave(String[] args) {
+        super(args);
     }
 
     @Override
@@ -14,7 +13,4 @@ public class CommandSave extends Command {
         appManager.collectionManager.save();
         LogPrinter.log("Saved collection");
     }
-
-    @Override
-    public void configure(String[] arguments) {}
 }

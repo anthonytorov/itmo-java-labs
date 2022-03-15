@@ -6,6 +6,10 @@ import eterna.uni.secondsem.LogPrinter;
 
 public class CommandInfo extends Command {
 
+    public CommandInfo(String[] args) {
+        super(args);
+    }
+
     @Override
     public void invoke(AppManager appManager) {
         
@@ -16,13 +20,4 @@ public class CommandInfo extends Command {
             "Size : " + manager.get_list().size()
         ));
     }
-
-    @Override
-    public void configure(String[] arguments) {}
-
-    @Override
-    public String getKey() {
-        return "info";
-    }
-    
 }

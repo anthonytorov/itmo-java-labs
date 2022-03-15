@@ -6,28 +6,17 @@ import eterna.uni.secondsem.LogPrinter;
 
 public class CommandUpdate extends Command {
 
-    private Integer id;
+    private final Integer ID;
 
-    @Override
-    public String getKey() {
-        return "update";
+    public CommandUpdate(String[] args) {
+        super(args);
+        if (args.length < 2) throw new NullPointerException("No ID entered!");
+        ID = Integer.parseInt(args[1]);
     }
 
     @Override
     public void invoke(AppManager appManager) {
-        new ConsolePromptPerson(appManager.collectionManager.fetch(id));
-        LogPrinter.log("Updated entry with id " + id);
+        new ConsolePromptPerson(appManager.collectionManager.fetch(ID));
+        LogPrinter.log("Updated entry with id " + ID);
     }
-
-    @Override
-    public void configure(String[] arguments) {
-        if (arguments.length < 2) LogPrinter.logEnterId();
-
-        try {
-            id = Integer.parseInt(arguments[1]); 
-        } catch (NumberFormatException nfex) {
-            LogPrinter.logIdError();
-        }
-    }
-    
 }

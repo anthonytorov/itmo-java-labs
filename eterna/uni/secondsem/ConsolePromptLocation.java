@@ -25,7 +25,7 @@ public class ConsolePromptLocation {
         }
         height = 0;
 
-        while (pushInput(new ConsolePrompt(getFieldPrompt())));
+        while (pushInput(AppManager.getTopPrompter()));
     }
 
     /**
@@ -33,9 +33,12 @@ public class ConsolePromptLocation {
      * @param prompt the console prompt to retrieve input from
      * @return true if the Location instance is incomplete, otherwise false
      */
-    public boolean pushInput(ConsolePrompt prompt) {
+    public boolean pushInput(Prompter prompt) {
+        
+        prompt.showPrompt(getFieldPrompt());
+        
         try {
-            String line = prompt.get_output();
+            String line = prompt.getOutput();
             switch (height) {
                 case 0:
                     location.set_x(new Float(line));

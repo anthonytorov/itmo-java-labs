@@ -28,7 +28,7 @@ public class ConsolePromptPerson {
         }
         height = 0;
 
-        while (pushInput(new ConsolePrompt(getFieldPrompt())));
+        while (pushInput(AppManager.getTopPrompter()));
     }
 
     /**
@@ -36,34 +36,37 @@ public class ConsolePromptPerson {
      * @param prompt the console prompt to retrieve input from
      * @return true if the Person instance is incomplete, otherwise false
      */
-    public boolean pushInput(ConsolePrompt prompt) {
+    public boolean pushInput(Prompter prompt) {
+
+        prompt.showPrompt(getFieldPrompt());
+
         try {
             switch (height) {
                 case 0:
-                    person.set_name(prompt.get_output());
+                    person.set_name(prompt.getOutput());
                     break;
                 case 1:
                     ConsolePromptCoordinates coordinatePrompt = new ConsolePromptCoordinates(null);
                     person.set_coordinates(coordinatePrompt.coords);
                     break;
                 case 2:
-                    person.set_height(Double.parseDouble(prompt.get_output()));
+                    person.set_height(Double.parseDouble(prompt.getOutput()));
                     break;
                 case 3:
-                    String line = prompt.get_output();
+                    String line = prompt.getOutput();
                     if (!line.isEmpty()) {
                         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
                         person.set_birthday(format.parse(line));
                     }
                     break;
                 case 4:
-                    line = prompt.get_output();
+                    line = prompt.getOutput();
                     if (!line.isEmpty()) {
                         person.set_hairColor(Color.valueOf(line));
                     }
                     break;
                 case 5:
-                    person.set_nationality(Country.valueOf(prompt.get_output()));
+                    person.set_nationality(Country.valueOf(prompt.getOutput()));
                     break;
                 case 6:
                     ConsolePromptLocation locationPrompt = new ConsolePromptLocation(null);

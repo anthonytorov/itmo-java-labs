@@ -6,6 +6,8 @@ import eterna.uni.secondsem.LogPrinter;
 
 public class CommandAddIfMax extends Command {
 
+    public CommandAddIfMax(String[] args) { super(args); }
+
     @Override
     public void invoke(AppManager appManager) {
         ConsolePromptPerson prompt = new ConsolePromptPerson(null);
@@ -17,13 +19,4 @@ public class CommandAddIfMax extends Command {
             LogPrinter.log("Failed to add person to the collection");
         }
     }
-
-    @Override
-    public void configure(String[] arguments) {}
-
-    @Override
-    public String getKey() {
-        return "add_if_max";
-    }
-    
 }

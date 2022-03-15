@@ -8,9 +8,8 @@ import eterna.uni.secondsem.Person;
 
 public class CommandShow extends Command {
 
-    @Override
-    public String getKey() {
-        return "show";
+    public CommandShow(String[] args) {
+        super(args);
     }
 
     @Override
@@ -28,7 +27,4 @@ public class CommandShow extends Command {
             LogPrinter.log(person.toString());
         }
     }
-
-    @Override
-    public void configure(String[] arguments) {}
 }
