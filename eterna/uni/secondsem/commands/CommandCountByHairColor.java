@@ -1,30 +1,25 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.AppManager;
 import eterna.uni.secondsem.Color;
-import eterna.uni.secondsem.LogPrinter;
-import eterna.uni.secondsem.Person;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandCountByHairColor extends Command{
 
-    private final Color SELECTED_COLOR; 
+    private final Color selectedColor; 
 
-    public CommandCountByHairColor(String[] args) {
-        super(args);
-        if (args.length < 2) throw new NullPointerException("No color entered!");
-        SELECTED_COLOR = Color.valueOf(args[1]);
+    public CommandCountByHairColor(Color color) {
+        selectedColor = color;
     }
 
     @Override
-    public void invoke(AppManager appManager) {
-        int count = 0;
+    public ServerResponse invoke() {
+        long count = ServerInitializer.getCollectionManager().get_list().stream().filter(p -> p.get_hairColor() == selectedColor).count();
+        return new ServerResponseMessage("People with hair color " + selectedColor + ": " + count);
+    }
 
-        for (Person p : appManager.collectionManager.get_list()) {
-            if (p.get_hairColor() == SELECTED_COLOR) {
-                count++;
-            }
-        }
-
-        LogPrinter.log("People with hair color " + SELECTED_COLOR + ": " + count);
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[] { Color.class };
     }
 }

@@ -1,9 +1,10 @@
 package eterna.uni.secondsem;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Coordinates implements CSVFormattable {
+public class Coordinates implements CSVFormattable, Serializable {
     /**
      * Must be larger than -21.
      */

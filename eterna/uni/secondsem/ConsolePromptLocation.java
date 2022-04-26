@@ -1,31 +1,31 @@
 package eterna.uni.secondsem;
 
+import java.util.Scanner;
+
 /**
  * Class for streamlined reading of Coordinate instances from the console.
  */
 public class ConsolePromptLocation {
     /**
-     * The instance to read into. Sequentially filled with input values. 
-     */
-    public Location location;
-    /**
      * Current field index.
      */
-    private int height;
+    private static int height;
     /**
      * Total fields in a Location instance.
      */
-    private final int STOP_HEIGHT = 4;
+    private static final int STOP_HEIGHT = 4;
 
-    public ConsolePromptLocation(Location _location) {
-        if (_location == null) {
-            location = new Location(0f, 0d, 0d, "Unnamed");
-        } else {
-            location = _location;
-        }
+    public static Location readFromScanner(Scanner inputScanner, boolean printPrompts) {
+        
+        Location location = new Location(0f, 0d, 0d, "Unnamed");
         height = 0;
+        
+        do {
+            if (printPrompts) LogPrinter.log(fieldPrompts[height + 1]);
+        }
+        while (pushInput(location, inputScanner));
 
-        while (pushInput(AppManager.getTopPrompter()));
+        return location;
     }
 
     /**
@@ -33,12 +33,10 @@ public class ConsolePromptLocation {
      * @param prompt the console prompt to retrieve input from
      * @return true if the Location instance is incomplete, otherwise false
      */
-    public boolean pushInput(Prompter prompt) {
-        
-        prompt.showPrompt(getFieldPrompt());
+    private static boolean pushInput(Location location, Scanner inputScanner) {
         
         try {
-            String line = prompt.getOutput();
+            String line = inputScanner.next();
             switch (height) {
                 case 0:
                     location.set_x(new Float(line));
@@ -71,20 +69,13 @@ public class ConsolePromptLocation {
     }
 
     /**
-     * @return a prompt for the field being currently read
+     * @return prompts for the fields
      */
-    private String getFieldPrompt() {
-        switch (height) {
-            default:
-                return "Unexpected field prompt!";
-            case 0:
-                return "Enter a float for the x coordinate: ";
-            case 1:
-                return "Enter a double for the y coordinate: ";
-            case 2:
-                return "Enter a double for the z coordinate: ";
-            case 3:
-                return "Enter the location's name (or \"\" for null)";
-        }
-    }
+    private final static String[] fieldPrompts = new String[] {
+        "Unexpected field prompt!",
+        "Enter a float for the x coordinate: ",
+        "Enter a double for the y coordinate: ",
+        "Enter a double for the z coordinate: ",
+        "Enter the location's name (or \"\" for null)"
+    };
 }

@@ -1,37 +1,31 @@
 package eterna.uni.secondsem.commands;
 
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.stream.Collectors;
 
-import eterna.uni.secondsem.AppManager;
-import eterna.uni.secondsem.LogPrinter;
 import eterna.uni.secondsem.Person;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.ServerInitializer;
 
-public class CommandPrintFieldDescendingNationality extends Command {
-
-    public CommandPrintFieldDescendingNationality(String[] args) {
-        super(args);
-    }
+public class CommandPrintFieldDescendingNationality extends Command implements Comparator<Person> {
 
     @Override
-    public void invoke(AppManager appManager) {
-        LinkedList<Person> list = appManager.collectionManager.get_list();
-        
-        PersonByCountryComparator comparator = new PersonByCountryComparator();
-        list.sort(comparator);
-        for (Person p : list) {
-            LogPrinter.log(p.get_nationality().name());
-        }
-
-        list.sort(null);
+    public ServerResponse invoke() {
+        String output = ServerInitializer.getCollectionManager().get_list()
+                                                .stream()
+                                                .sorted(this)
+                                                .map(p -> p.get_nationality().name())
+                                                .collect(Collectors.joining("\n", "Collection (sorted descending by nationality (yikes)) :", "\n"));
+        return new ServerResponseMessage(output);
     }
 
-    private class PersonByCountryComparator implements Comparator<Person> {
-
-        @Override
-        public int compare(Person o1, Person o2) {
-            return o1.get_nationality().name().compareTo(o2.get_nationality().name());
-        }
-        
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[0];
+    }
+    
+    @Override
+    public int compare(Person o1, Person o2) {
+        return o1.get_nationality().name().compareTo(o2.get_nationality().name());
     }
 }

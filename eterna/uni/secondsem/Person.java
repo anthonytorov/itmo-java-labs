@@ -1,17 +1,18 @@
 package eterna.uni.secondsem;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class Person implements Comparable<Person>, CSVFormattable {
+public class Person implements Comparable<Person>, CSVFormattable, Serializable {
     /**
      * Cannot be null, Must be larger than zero, Unique, Automatic
      */
-    private Integer id;
+    private transient Integer id;
     public Integer get_id() { return id; }
 
     /**
@@ -123,7 +124,7 @@ public class Person implements Comparable<Person>, CSVFormattable {
     @Override
     public void readFromCSVLine(Scanner csvScanner) throws IOException {
         try {
-            set_name(Sanitizer.unsanitizeString(csvScanner.next()));
+            set_name(StringSanitizer.unsanitizeString(csvScanner.next()));
         
             coordinates.readFromCSVLine(csvScanner);
             creationDate = new Date((csvScanner.nextLong()));
@@ -150,7 +151,7 @@ public class Person implements Comparable<Person>, CSVFormattable {
     @Override
     public String toCSVString() {
         return String.join(",",
-            Sanitizer.sanitizeString(name),
+            StringSanitizer.sanitizeString(name),
             coordinates.toCSVString(),
             ""+creationDate.getTime(),
             ""+height,

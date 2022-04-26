@@ -1,15 +1,13 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.AppManager;
+import eterna.uni.secondsem.networking.ServerResponse;
 
 public class CommandExit extends Command {
 
-    public CommandExit(String[] args) {
-        super(args);
-    }
-
     @Override
-    public void invoke(AppManager appManager) {
-        appManager.quit();
+    public ServerResponse invoke() { return null; }
+
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[0];
     }
 }

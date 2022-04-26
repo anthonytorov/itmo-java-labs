@@ -1,4 +1,7 @@
 javac -d "." -encoding "utf-8" ./eterna/uni/secondsem/*.java
 javac -d "." -encoding "utf-8" ./eterna/uni/secondsem/commands/*.java
-jar -cfm Lab5.jar manifest5.txt .
+javac -d "." -encoding "utf-8" ./eterna/uni/secondsem/networking/*.java
+javac -d "." -encoding "utf-8" ./eterna/uni/secondsem/client/*.java
+javac -d "." -encoding "utf-8" ./eterna/uni/secondsem/server/*.java
+jar -cfm Lab6.jar manifest6.txt .
 pause

@@ -1,22 +1,32 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.AppManager;
-import eterna.uni.secondsem.ConsolePromptPerson;
-import eterna.uni.secondsem.LogPrinter;
+import eterna.uni.secondsem.Person;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.CollectionManager;
+import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandAddIfMin extends Command {
 
-    public CommandAddIfMin(String[] args) { super(args); }
+    private final Person person;
+
+    public CommandAddIfMin(Person _person) { 
+        person = _person;
+    }
 
     @Override
-    public void invoke(AppManager appManager) {        
-        ConsolePromptPerson prompt = new ConsolePromptPerson(null);
-        int comparison = appManager.collectionManager.compareToCollectionBounds(prompt.person);
+    public ServerResponse invoke() {
+        CollectionManager collectionManager = ServerInitializer.getCollectionManager();
+        int comparison = collectionManager.compareToCollectionBounds(person);
         if (comparison < 0) {
-            appManager.collectionManager.add(prompt.person);
-            LogPrinter.log("Successfully added the new person to the collection");
+            collectionManager.add(person);
+            return new ServerResponseMessage("Successfully added the new person to the collection");
         } else {
-            LogPrinter.log("Failed to add person to the collection");
+            return new ServerResponseMessage("Failed to add person to the collection");
         }
+    }
+
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[] { Person.class };
     }
 }

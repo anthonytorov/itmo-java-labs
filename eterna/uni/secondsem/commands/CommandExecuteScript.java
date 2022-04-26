@@ -1,26 +1,32 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.AppManager;
-import eterna.uni.secondsem.LogPrinter;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandExecuteScript extends Command {
 
-    private final String PATH;
+    private final String scriptPath;
     private static int executingScripts = 0;
 
-    public CommandExecuteScript(String[] args) {
-        super(args);
-        if (args.length < 2) throw new IllegalArgumentException("Must enter a path for the script file!");
-        PATH = args[1];
+    public CommandExecuteScript(String pathToScript) {
+        scriptPath = pathToScript;
     }
 
     @Override
-    public void invoke(AppManager appManager) {
+    public ServerResponse invoke() {
+
+        boolean success = false;
+
         if (executingScripts == 1) throw new StackOverflowError("Can't execute more than one script!");
         executingScripts++;
-        if (!appManager.siphonInputFromFile(PATH)) {
-            LogPrinter.logPathError();
-        }
+        success = ServerInitializer.getCommandInvoker().siphonInputFromFile(scriptPath);
         executingScripts--;
+        
+        return new ServerResponseMessage(success ? "Successfully executed script" : "Failed to execute script");
+    }
+
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[] { String.class };
     }
 }

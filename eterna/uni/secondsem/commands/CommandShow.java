@@ -2,29 +2,31 @@ package eterna.uni.secondsem.commands;
 
 import java.util.Collection;
 
-import eterna.uni.secondsem.AppManager;
-import eterna.uni.secondsem.LogPrinter;
 import eterna.uni.secondsem.Person;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandShow extends Command {
 
-    public CommandShow(String[] args) {
-        super(args);
-    }
-
     @Override
-    public void invoke(AppManager appManager) {
+    public ServerResponse invoke() {
 
-        Collection<Person> list = appManager.collectionManager.get_list();
+        Collection<Person> list = ServerInitializer.getCollectionManager().get_list();
 
         if (list.size() == 0) {
-            LogPrinter.log("Collection is empty!");
-            return;
+            return new ServerResponseMessage("Collection is empty!");
         }
 
-        LogPrinter.log("Collection contains " + list.size() + " items:");
+        String message = ("Collection contains " + list.size() + " items:\n");
         for (Person person : list) {
-            LogPrinter.log(person.toString());
+            message += (person.toString() + "\n");
         }
+
+        return new ServerResponseMessage(message);
+    }
+
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[0];
     }
 }

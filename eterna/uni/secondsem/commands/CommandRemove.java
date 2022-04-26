@@ -1,24 +1,29 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.AppManager;
-import eterna.uni.secondsem.LogPrinter;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.CollectionManager;
+import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandRemove extends Command {
 
-    private final Integer ID;
+    private final Integer id;
 
-    public CommandRemove(String[] args) {
-        super(args);
-        if (args.length < 2) throw new NullPointerException("No ID entered!");
-        ID = Integer.parseInt(args[1]);
+    public CommandRemove(Integer _id) {
+        id = _id;
     }
 
     @Override
-    public void invoke(AppManager appManager) {
-        if (appManager.collectionManager.remove(ID)) {
-            LogPrinter.log("Removed entry with id " + ID);
+    public ServerResponse invoke() {
+        CollectionManager collectionManager = ServerInitializer.getCollectionManager();
+        if (collectionManager.remove(id)) {
+            return new ServerResponseMessage("Removed entry with id " + id);
         } else {
-            LogPrinter.log("Entry with ID " + ID + " is missing from the collection");
+            return new ServerResponseMessage("Entry with ID " + id + " is missing from the collection");
         }
+    }
+
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[] { Integer.class };
     }
 }

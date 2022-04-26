@@ -80,4 +80,35 @@ public class LogPrinter {
 
         throw new UnsupportedOperationException("unexpected command key");
     }
+
+    public static String getCommandHelpString() {
+        String[] keys = new String[] {
+            "help",
+            "info",
+            "show",
+            "add",
+            "update",
+            "remove_by_id",
+            "clear",
+            "save",
+            "execute_script",
+            "exit",
+            "add_if_max",
+            "add_if_min",
+            "shuffle",
+            "count_by_hair_color",
+            "filter_less_than_location",
+            "print_field_descending_nationality"
+        };
+
+        String value = "";
+        for (String key : keys) {
+            value += String.format(
+                "%s: %s\n",
+                key,
+                getDescriptionFor(key)
+            );
+        }
+        return value;
+    }
 }

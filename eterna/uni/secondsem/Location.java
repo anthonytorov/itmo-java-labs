@@ -1,9 +1,10 @@
 package eterna.uni.secondsem;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Location implements CSVFormattable, Comparable<Location> {
+public class Location implements CSVFormattable, Comparable<Location>, Serializable {
     /**
      * Cannot be null
      */
@@ -57,7 +58,7 @@ public class Location implements CSVFormattable, Comparable<Location> {
             z = csvScanner.nextDouble();
 
             if (csvScanner.hasNext()) {
-                set_name(Sanitizer.unsanitizeString(csvScanner.next()));
+                set_name(StringSanitizer.unsanitizeString(csvScanner.next()));
             } else {
                 set_name(null);
             }
@@ -74,7 +75,7 @@ public class Location implements CSVFormattable, Comparable<Location> {
             x.toString(),
             ""+y,
             ""+z,
-            (name == null ? "" : Sanitizer.sanitizeString(name))
+            (name == null ? "" : StringSanitizer.sanitizeString(name))
         );
     }
 

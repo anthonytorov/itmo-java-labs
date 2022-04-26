@@ -1,23 +1,23 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.AppManager;
-import eterna.uni.secondsem.CollectionManager;
-import eterna.uni.secondsem.LogPrinter;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.CollectionManager;
+import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandInfo extends Command {
 
-    public CommandInfo(String[] args) {
-        super(args);
+    @Override
+    public ServerResponse invoke() {
+        CollectionManager collectionManager = ServerInitializer.getCollectionManager();
+        return new ServerResponseMessage(String.join("\n",
+            "Collection type : " + collectionManager.get_list().getClass().toString(),
+            "Initialization date : " + collectionManager.get_initializationDate().toString(),
+            "Size : " + collectionManager.get_list().size()
+        ));
     }
 
-    @Override
-    public void invoke(AppManager appManager) {
-        
-        CollectionManager manager = appManager.collectionManager;
-        LogPrinter.log(String.join("\n",
-            "Collection type : " + manager.get_list().getClass().toString(),
-            "Initialization date : " + manager.get_initializationDate().toString(),
-            "Size : " + manager.get_list().size()
-        ));
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[0];
     }
 }

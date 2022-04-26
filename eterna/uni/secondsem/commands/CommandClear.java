@@ -1,15 +1,21 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.AppManager;
+import eterna.uni.secondsem.networking.ServerResponse;
+import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.server.CollectionManager;
+import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandClear extends Command {
 
-    public CommandClear(String[] args) {
-        super(args);
+    @Override
+    public ServerResponse invoke() {
+        CollectionManager collectionManager = ServerInitializer.getCollectionManager();
+        collectionManager.clear();
+
+        return new ServerResponseMessage("Successfully cleared collection.");
     }
 
-    @Override
-    public void invoke(AppManager appManager) {
-        appManager.collectionManager.clear();
+    public static Class<?>[] getConstuctorClasses() {
+        return new Class<?>[0];
     }
 }
