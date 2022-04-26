@@ -25,7 +25,7 @@ public class CommandExecuteScript extends Command {
         
         try {
             executingScripts++;
-            success = ServerInitializer.getCommandInvoker().siphonInputFromFile(System.getProperty("user.dir") + "\\" + scriptPath);
+            success = ServerInitializer.getCommandInvoker().siphonInputFromFile(scriptPath);
             if (success) message = "Successfully executed script";
             executingScripts--;
         } catch (IOException ioex) {

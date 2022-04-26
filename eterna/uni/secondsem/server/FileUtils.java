@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 import eterna.uni.secondsem.LogPrinter;
@@ -41,7 +42,7 @@ public class FileUtils {
      */
     public static FileInputStream openFileInputStream(String path, boolean createIfDoesntExist) throws IOException {
         try {
-            return new FileInputStream(path);
+            return new FileInputStream(Paths.get(System.getProperty("user.dir"), path).toString());
         } catch (SecurityException securityException) {
             LogPrinter.log("A security exception occurred while writing to " + path);
         }

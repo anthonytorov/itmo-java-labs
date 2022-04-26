@@ -1,7 +1,6 @@
 package eterna.uni.secondsem.client;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -76,12 +75,10 @@ public class ClientInitializer {
         
         try {
             return new Socket(NetworkSettings.get_address(), NetworkSettings.get_port());
-        } catch (ConnectException e) {
-            return null;
         } catch (IOException e) {
-            e.printStackTrace();
-        }
+            LogPrinter.log("Failed to connect, retrying...");
 
-        return attemptConnection(height + 1);
+            return attemptConnection(height + 1);
+        }
     }
 }
