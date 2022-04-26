@@ -24,15 +24,15 @@ public class ClientInitializer {
     private final CommandReader commandReader;
     private boolean run;
 
-    public static void start() { 
-        instance = new ClientInitializer();
+    public static void start(String hostname, int port) { 
+        instance = new ClientInitializer(hostname, port);
         instance.executionLoop(); 
     }
 
-    private ClientInitializer() {
+    private ClientInitializer(String hostname, int port) {
         
         try {
-            NetworkSettings.initialize_localhost();
+            NetworkSettings.initialize_hostname(hostname, port, 1);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }  

@@ -21,13 +21,18 @@ public class Lab6_Launcher {
 
         LogPrinter.log(String.format("Lab6 starting in %s mode", (serverMode ? "server" : "client")));
         if (serverMode) {
-            if (args.length > 1) {
-                ServerInitializer.start(args[1]);
+            if (args.length > 2) {
+                ServerInitializer.start(args[1], Integer.parseInt(args[2]));
             } else {
-                LogPrinter.log("Please enter the database path!");
+                LogPrinter.log("Please enter the database path and the application port!");
             }
         } else {
-            ClientInitializer.start();
+
+            if (args.length < 3) {
+                LogPrinter.log("Please enter the database host name and port!");
+            }
+
+            ClientInitializer.start(args[1], Integer.parseInt(args[2]));
         }
     }
 }

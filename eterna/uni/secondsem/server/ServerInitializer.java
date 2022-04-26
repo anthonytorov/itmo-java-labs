@@ -13,8 +13,8 @@ public class ServerInitializer {
         return instance;
     }
 
-    public static void start(String _path) { 
-        instance = new ServerInitializer(_path); 
+    public static void start(String _path, int port) { 
+        instance = new ServerInitializer(_path, port); 
 
         instance.executionLoop();
     }
@@ -36,11 +36,14 @@ public class ServerInitializer {
 
     private ServerCommandInvoker commandInvoker;
     private boolean run;
+    private NetworkObjectExchanger activeNoe;
 
-    public ServerInitializer(String _databasePath) {
+    public static void exit() { instance.run = false; instance.activeNoe.closeSocket(); }
+
+    public ServerInitializer(String _databasePath, int port) {
         
         try {
-            NetworkSettings.initialize_localhost();
+            NetworkSettings.initialize_hostname("localhost", port, 1);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -55,13 +58,13 @@ public class ServerInitializer {
         run = true;
 
         while (run) {
-            NetworkObjectExchanger noe = connectionReceiver.waitForConnection();
-            commandInvoker = new ServerCommandInvoker(noe);
+            activeNoe = connectionReceiver.waitForConnection();
+            commandInvoker = new ServerCommandInvoker(activeNoe);
 
-            while (noe.isConnectionOpen()) {
+            while (activeNoe.isConnectionOpen()) {
                 boolean success = commandInvoker.executeNextClientCommand();
                 if (!success) {
-                    noe.closeSocket();
+                    activeNoe.closeSocket();
                     LogPrinter.log("Closing connection...");
                 }
             }

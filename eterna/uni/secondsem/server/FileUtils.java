@@ -36,18 +36,12 @@ public class FileUtils {
 
     /**
      * Attempts to create a FileInputStream for a file.
-     * @param path path to the file being scanned (must exist)
+     * @param path path to the file being scanned
      * @return a Scanner instance if successful, otherwise null 
      */
-    public static FileInputStream openFileInputStream(String path, boolean createIfDoesntExist) {
+    public static FileInputStream openFileInputStream(String path, boolean createIfDoesntExist) throws IOException {
         try {
-            File dbfile = new File(path);
-            if (!dbfile.exists() && createIfDoesntExist) {
-                dbfile.createNewFile();
-            }
-            return new FileInputStream(dbfile);
-        } catch (IOException ioex) {
-            LogPrinter.log("An I/O exception occured while reading " + path);
+            return new FileInputStream(path);
         } catch (SecurityException securityException) {
             LogPrinter.log("A security exception occurred while writing to " + path);
         }

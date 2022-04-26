@@ -73,6 +73,9 @@ public class CommandReader {
         if (expectedClass == Person.class) {
             return ConsolePromptPerson.readFromScanner(inputScanner, verbose);
         }
+        if (expectedClass == String.class) {
+            return inputScanner.next();
+        }
 
         Pattern parsePattern = Pattern.compile("parse");
         Method[] methods = expectedClass.getMethods();

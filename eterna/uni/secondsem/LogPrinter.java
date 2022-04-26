@@ -90,7 +90,6 @@ public class LogPrinter {
             "update",
             "remove_by_id",
             "clear",
-            "save",
             "execute_script",
             "exit",
             "add_if_max",

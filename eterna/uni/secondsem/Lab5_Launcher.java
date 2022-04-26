@@ -13,8 +13,8 @@ public class Lab5_Launcher {
             System.out.println("Please enter a file path!");
         } else {
             System.out.println("Lab5 online.");
-            ServerInitializer.start(args[0]);
-            ClientInitializer.start();
+            ServerInitializer.start(args[0], 3809);
+            ClientInitializer.start("localhost", 3809);
         }
     }
 }

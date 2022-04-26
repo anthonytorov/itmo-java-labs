@@ -12,6 +12,9 @@ public class NetworkSettings {
     public static void initialize(String _ipV4String, int _port, int _bufferSize) throws UnknownHostException {
         main = new NetworkSettings(convertFromString(_ipV4String), _port, _bufferSize);
     }
+    public static void initialize_hostname(String hostname, int _port, int _bufferSize) throws UnknownHostException {
+        main = new NetworkSettings(InetAddress.getByName(hostname), _port, _bufferSize);
+    }
 
     private final int port;
     public static int get_port() { return main.port; }

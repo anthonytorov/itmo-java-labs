@@ -1,5 +1,7 @@
 package eterna.uni.secondsem.commands;
 
+import java.io.IOException;
+
 import eterna.uni.secondsem.networking.ServerResponse;
 import eterna.uni.secondsem.networking.ServerResponseMessage;
 import eterna.uni.secondsem.server.ServerInitializer;
@@ -17,13 +19,21 @@ public class CommandExecuteScript extends Command {
     public ServerResponse invoke() {
 
         boolean success = false;
+        String message = "Failed to execute script.";
 
         if (executingScripts == 1) throw new StackOverflowError("Can't execute more than one script!");
-        executingScripts++;
-        success = ServerInitializer.getCommandInvoker().siphonInputFromFile(scriptPath);
-        executingScripts--;
         
-        return new ServerResponseMessage(success ? "Successfully executed script" : "Failed to execute script");
+        try {
+            executingScripts++;
+            success = ServerInitializer.getCommandInvoker().siphonInputFromFile(System.getProperty("user.dir") + "\\" + scriptPath);
+            if (success) message = "Successfully executed script";
+            executingScripts--;
+        } catch (IOException ioex) {
+            success = false;
+            message = ("Failed to execute script: " + ioex.getCause().toString());
+        }
+
+        return new ServerResponseMessage(message);
     }
 
     public static Class<?>[] getConstuctorClasses() {

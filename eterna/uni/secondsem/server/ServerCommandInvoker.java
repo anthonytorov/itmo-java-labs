@@ -22,7 +22,7 @@ public class ServerCommandInvoker {
      * @param filepath path to the script text file.
      * @return true if the script was successfully executed, otherwise false.  
      */
-    public boolean siphonInputFromFile(String filepath) {
+    public boolean siphonInputFromFile(String filepath) throws IOException {
 
         try (FileInputStream inputStream = FileUtils.openFileInputStream(filepath, false)) {
             if (inputStream == null) return false;
@@ -38,11 +38,13 @@ public class ServerCommandInvoker {
                         noe.pushObject(response);
                 }
             }
+
+            return true;
         } catch (IOException ioex) {
             ioex.printStackTrace();
         }
 
-        return true;
+        return false;
     }
 
     public boolean executeNextClientCommand() {
