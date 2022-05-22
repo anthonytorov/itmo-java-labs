@@ -1,15 +1,15 @@
 package eterna.uni.secondsem.client;
 
 import java.io.IOException;
-import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.nio.channels.SocketChannel;
 
 import eterna.uni.secondsem.CommandReader;
 import eterna.uni.secondsem.LogPrinter;
 import eterna.uni.secondsem.commands.Command;
 import eterna.uni.secondsem.commands.CommandExit;
 import eterna.uni.secondsem.commands.CommandSave;
-import eterna.uni.secondsem.networking.NetworkObjectExchanger;
 import eterna.uni.secondsem.networking.NetworkSettings;
 import eterna.uni.secondsem.networking.ServerResponse;
 
@@ -31,7 +31,7 @@ public class ClientInitializer {
     private ClientInitializer(String hostname, int port) {
         
         try {
-            NetworkSettings.initialize_hostname(hostname, port, 1);
+            NetworkSettings.initialize_hostname(hostname, port, 4096);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }  
@@ -44,12 +44,12 @@ public class ClientInitializer {
         run = true;
         LogPrinter.log("Attempting connection to " + NetworkSettings.get_address() + ":" + NetworkSettings.get_port());
 
-        Socket socket = attemptConnection(0);
-        if (socket == null) {
+        SocketChannel socketChannel = attemptConnection(0);
+        if (socketChannel == null) {
             LogPrinter.log("Failed to connect.");
             return;
         }
-        NetworkObjectExchanger noe = new NetworkObjectExchanger(socket);
+        ClientObjectSerializer noe = new ClientObjectSerializer(socketChannel);
         LogPrinter.log("Connection successful.");
 
         while (run && commandReader.canReadNextCommand()) {
@@ -69,15 +69,14 @@ public class ClientInitializer {
         noe.closeSocket();
     }
 
-    private Socket attemptConnection(int height) {
+    private SocketChannel attemptConnection(int height) {
         
         if (height == 10) return null;
         
         try {
-            return new Socket(NetworkSettings.get_address(), NetworkSettings.get_port());
+            return SocketChannel.open(new InetSocketAddress(NetworkSettings.get_address(), NetworkSettings.get_port()));
         } catch (IOException e) {
             LogPrinter.log("Failed to connect, retrying...");
-
             return attemptConnection(height + 1);
         }
     }

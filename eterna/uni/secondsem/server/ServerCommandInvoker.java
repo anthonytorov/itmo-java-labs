@@ -6,14 +6,13 @@ import java.io.IOException;
 import eterna.uni.secondsem.CommandReader;
 import eterna.uni.secondsem.LogPrinter;
 import eterna.uni.secondsem.commands.Command;
-import eterna.uni.secondsem.networking.NetworkObjectExchanger;
 import eterna.uni.secondsem.networking.ServerResponse;
 
 public class ServerCommandInvoker {
     
-    private final NetworkObjectExchanger noe;
+    private final ServerObjectSerializer noe;
     
-    public ServerCommandInvoker(NetworkObjectExchanger _noe) {
+    public ServerCommandInvoker(ServerObjectSerializer _noe) {
         noe = _noe;
     }
 

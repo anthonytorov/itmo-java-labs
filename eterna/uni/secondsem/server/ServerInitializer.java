@@ -3,7 +3,6 @@ package eterna.uni.secondsem.server;
 import java.net.UnknownHostException;
 
 import eterna.uni.secondsem.LogPrinter;
-import eterna.uni.secondsem.networking.NetworkObjectExchanger;
 import eterna.uni.secondsem.networking.NetworkSettings;
 
 public class ServerInitializer {
@@ -36,14 +35,14 @@ public class ServerInitializer {
 
     private ServerCommandInvoker commandInvoker;
     private boolean run;
-    private NetworkObjectExchanger activeNoe;
+    private ServerObjectSerializer activeNoe;
 
     public static void exit() { instance.run = false; instance.activeNoe.closeSocket(); }
 
     public ServerInitializer(String _databasePath, int port) {
         
         try {
-            NetworkSettings.initialize_hostname("localhost", port, 1);
+            NetworkSettings.initialize_hostname("localhost", port, 4096);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

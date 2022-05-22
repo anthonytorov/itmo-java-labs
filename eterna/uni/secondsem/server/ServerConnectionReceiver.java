@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import eterna.uni.secondsem.LogPrinter;
-import eterna.uni.secondsem.networking.NetworkObjectExchanger;
 import eterna.uni.secondsem.networking.NetworkSettings;
 
 public class ServerConnectionReceiver {
@@ -23,12 +22,12 @@ public class ServerConnectionReceiver {
         }
     }
 
-    public NetworkObjectExchanger waitForConnection() {
+    public ServerObjectSerializer waitForConnection() {
         try {
             LogPrinter.log("Waiting for client...");
             Socket clientSocket = _serverSocket.accept();
             LogPrinter.log("Accepted client " + clientSocket.getRemoteSocketAddress());
-            return new NetworkObjectExchanger(clientSocket);
+            return new ServerObjectSerializer(clientSocket);
         } catch (IOException ioex) {
             ioex.printStackTrace();
         }
