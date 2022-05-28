@@ -47,6 +47,8 @@ public class ServerInitializer {
             throw new RuntimeException(e);
         }
 
+        LogPrinter.initialize();
+
         collectionManager = new CollectionManager(_databasePath);
 
         connectionReceiver = new ServerConnectionReceiver();

@@ -4,6 +4,28 @@ package eterna.uni.secondsem;
  * Wrapper class for various text outputs.
  */
 public class LogPrinter {
+
+    private static LogPrinter instance;
+
+    public static void initialize() {
+        instance = new LogPrinter();
+    }
+    private static LogPrinter getInstance() {
+        if (instance == null) {
+            throw new NullPointerException("Log Printer was not initialized with a locale!");
+        }
+        return instance;
+    }
+
+    /**
+     * @param commandKey key of a certain command
+     * @return description of the command with key commandKey
+     * @throws IllegalArgumentException if commandKey is not recognised
+     */
+    public static String getString(String commandKey) throws IllegalArgumentException {
+        return getInstance().getLocalisedString(commandKey);
+    }
+
     /**
      * Prints message in the console.
      * @param message
@@ -20,30 +42,42 @@ public class LogPrinter {
         System.out.println(String.format("Encountered exception: %s", exception.toString()));
     }
 
-    /**
-     * Prints message asking to enter a non-empty string for an id.
-     */
-    public static void logEnterId() { log("please enter an id!"); }
-    /**
-     * Prints message notifying about an error in id.
-     */
-    public static void logIdError() { log("please enter an integer id from the collection!"); }
-    /**
-     * Prints message asking to enter a non-empty file path.
-     */
-    public static void logEnterPath() { log("please enter a path!"); }
-    /**
-     * Prints message notyfing about an error in the path.
-     */
-    public static void logPathError() { log("please enter a valid path!"); }
+    public static String getCommandHelpString() {
+        String[] keys = new String[] {
+            "help",
+            "info",
+            "show",
+            "add",
+            "update",
+            "remove_by_id",
+            "clear",
+            "execute_script",
+            "exit",
+            "add_if_max",
+            "add_if_min",
+            "shuffle",
+            "count_by_hair_color",
+            "filter_less_than_location",
+            "print_field_descending_nationality"
+        };
 
-    /**
-     * @param commandKey key of a certain command
-     * @return description of the command with key commandKey
-     * @throws UnsupportedOperationException if commandKey is unsupported
-     */
-    public static String getDescriptionFor(String commandKey) throws UnsupportedOperationException {
-        switch (commandKey) {
+        String value = "";
+        for (String key : keys) {
+            value += String.format(
+                "%s: %s\n",
+                key,
+                getInstance().getLocalisedString(key)
+            );
+        }
+        return value;
+    }
+
+    private LogPrinter() {
+        // ctr
+    }
+
+    private String getLocalisedString(String key) throws IllegalArgumentException {
+        switch (key) {
             case "help":
                 return "prints this message";
             case "info":
@@ -78,36 +112,6 @@ public class LogPrinter {
                 return "prints the nationalities of the elements of the collection in descending order";
         }
 
-        throw new UnsupportedOperationException("unexpected command key");
-    }
-
-    public static String getCommandHelpString() {
-        String[] keys = new String[] {
-            "help",
-            "info",
-            "show",
-            "add",
-            "update",
-            "remove_by_id",
-            "clear",
-            "execute_script",
-            "exit",
-            "add_if_max",
-            "add_if_min",
-            "shuffle",
-            "count_by_hair_color",
-            "filter_less_than_location",
-            "print_field_descending_nationality"
-        };
-
-        String value = "";
-        for (String key : keys) {
-            value += String.format(
-                "%s: %s\n",
-                key,
-                getDescriptionFor(key)
-            );
-        }
-        return value;
+        throw new IllegalArgumentException("unexpected command key");
     }
 }

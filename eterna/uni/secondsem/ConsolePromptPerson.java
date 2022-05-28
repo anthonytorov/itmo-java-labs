@@ -71,10 +71,10 @@ public class ConsolePromptPerson {
             height++;
         }
         catch (ParseException pex) {
-            LogPrinter.log(pex.getMessage());
+            LogPrinter.log("Invalid input! - " + pex.getMessage());
         }
         catch (NumberFormatException nfex) {
-            LogPrinter.log(nfex.getMessage());
+            LogPrinter.log("Invalid input! - " + nfex.getMessage());
         } 
         catch (IllegalArgumentException iaex) {
             LogPrinter.log(iaex.getMessage());

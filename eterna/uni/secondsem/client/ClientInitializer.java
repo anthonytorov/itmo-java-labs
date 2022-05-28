@@ -37,6 +37,7 @@ public class ClientInitializer {
         }  
 
         commandReader = new CommandReader(System.in, true);
+        LogPrinter.initialize();
     }
 
     private void executionLoop() {
