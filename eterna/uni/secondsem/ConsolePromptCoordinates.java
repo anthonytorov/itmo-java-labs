@@ -17,7 +17,7 @@ public class ConsolePromptCoordinates {
 
     public static Coordinates readFromScanner(Scanner inputScanner, boolean printPrompts) {
         height = 0;
-        Coordinates coords = new Coordinates();
+        Coordinates coords = new Coordinates(0, 0);
         do {
             if (printPrompts) LogPrinter.log(fieldPrompts[height + 1]);
         }
@@ -47,10 +47,10 @@ public class ConsolePromptCoordinates {
             height++;
         }
         catch (NumberFormatException nfex) {
-            LogPrinter.log(nfex.getMessage());
+            LogPrinter.log("Invalid input! - " + nfex.getMessage());
         } 
         catch (IllegalArgumentException iaex) {
-            LogPrinter.log(iaex.getMessage());
+            LogPrinter.log("Invalid input! - " + iaex.getMessage());
         }
 
         if (height == STOP_HEIGHT) {

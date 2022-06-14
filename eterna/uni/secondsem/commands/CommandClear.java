@@ -1,18 +1,20 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.networking.ServerResponse;
-import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.FailedToInvokeCommandException;
 import eterna.uni.secondsem.server.CollectionManager;
 import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandClear extends Command {
 
     @Override
-    public ServerResponse invoke() {
+    public Boolean invoke() {
         CollectionManager collectionManager = ServerInitializer.getCollectionManager();
-        collectionManager.clear();
-
-        return new ServerResponseMessage("Successfully cleared collection.");
+        try {
+            collectionManager.clear();
+            return true;
+        } catch (FailedToInvokeCommandException ex) {
+            return false;
+        }
     }
 
     public static Class<?>[] getConstuctorClasses() {

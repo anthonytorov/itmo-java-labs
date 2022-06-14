@@ -1,2 +1,2 @@
-java -Xdiag -jar Lab6.jar "server" "personDatabase.csv" 0
+java -Xdiag -jar Lab7/Lab7.jar "server" "server.properties" 0
 pause

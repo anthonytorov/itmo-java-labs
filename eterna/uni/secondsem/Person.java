@@ -1,25 +1,22 @@
 package eterna.uni.secondsem;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
-public class Person implements Comparable<Person>, CSVFormattable, Serializable {
+public class Person implements Comparable<Person>, Serializable {
     /**
      * Cannot be null, Must be larger than zero, Unique, Automatic
      */
-    private transient Integer id;
+    private Integer id;
     public Integer get_id() { return id; }
 
     /**
      * Cannot be null or empty
      */
     private String name;
-    public String get_name(String value) { return name; }
+    public String get_name() { return name; }
     /**
      * Sets name to value, unless value is null or empty
      * @param value
@@ -110,7 +107,22 @@ public class Person implements Comparable<Person>, CSVFormattable, Serializable 
         location = value;
     }
 
+    public Person(Integer _id, String _name, Coordinates _coords, Date _creationDate, double _height, Country _nation, Location _location) {
+        if (!PersonIdPool.add(_id)) {
+            throw new IllegalArgumentException();
+        }
+        id = _id;
+        name = _name;
+        coordinates = _coords;
+        height = _height;
+        creationDate = _creationDate;
+        birthday = null;
+        hairColor = null;
+        nationality = _nation;
+        location = _location;
+    }
     public Person(String _name, Coordinates _coords, double _height, Country _nation, Location _location) {
+        id = PersonIdPool.getNextId();
         name = _name;
         coordinates = _coords;
         height = _height;
@@ -121,53 +133,17 @@ public class Person implements Comparable<Person>, CSVFormattable, Serializable 
         location = _location;
     }
     
-    @Override
-    public void readFromCSVLine(Scanner csvScanner) throws IOException {
-        try {
-            set_name(StringSanitizer.unsanitizeString(csvScanner.next()));
-        
-            coordinates.readFromCSVLine(csvScanner);
-            creationDate = new Date((csvScanner.nextLong()));
-
-            set_height(csvScanner.nextDouble());
-            set_birthday(new Date(csvScanner.nextLong()));
-
-            String hairColorField = csvScanner.next();
-            if (!hairColorField.isEmpty()) {
-                set_hairColor(Color.valueOf(hairColorField));
-            }
-
-            set_nationality(Country.valueOf(csvScanner.next()));
-            location.readFromCSVLine(csvScanner);
-        } catch (IllegalArgumentException iaex) {
-            throw new IOException(iaex);
-        } catch (NoSuchElementException nseex) {
-            throw new IOException(nseex);
-        } catch (NullPointerException npex) {
-            throw new IOException(npex);
-        }
-    }
-
-    @Override
-    public String toCSVString() {
-        return String.join(",",
-            StringSanitizer.sanitizeString(name),
-            coordinates.toCSVString(),
-            ""+creationDate.getTime(),
-            ""+height,
-            (birthday == null ? "" : ""+birthday.getTime()),
-            (hairColor == null ? "" : hairColor.toString()),
-            nationality.toString(),
-            location.toCSVString()
-        );
-    }
-    
     /**
      * Assigns a new id to this instance of Person, and prevents it from overlapping with others
      */
     public void register() {
         if (id != null) unregister();
         id = PersonIdPool.getNextId();
+    }
+    public void register(int id) {
+        if (this.id != null) unregister();
+        if (!PersonIdPool.add(id)) throw new IllegalArgumentException();
+        this.id = id;
     }
     /**
      * Removes Person's id from uniqueness check and sets it to null
@@ -221,6 +197,15 @@ public class Person implements Comparable<Person>, CSVFormattable, Serializable 
         public static boolean freeId(Integer id) {
             lastId = Math.min(lastId, id);
             return OCCUPIED_IDS.remove(id);
+        }
+
+        /**
+         * Checks if an id is being used by another instance of Person, if successful, it adds id to the set of occupied ids. 
+         * @param id
+         * @return
+         */
+        public static boolean add(Integer id) {
+            return OCCUPIED_IDS.add(id);
         }
     }
 }

@@ -1,8 +1,7 @@
 package eterna.uni.secondsem.commands;
 
+import eterna.uni.secondsem.FailedToInvokeCommandException;
 import eterna.uni.secondsem.Person;
-import eterna.uni.secondsem.networking.ServerResponse;
-import eterna.uni.secondsem.networking.ServerResponseMessage;
 import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandAdd extends Command {
@@ -14,9 +13,13 @@ public class CommandAdd extends Command {
     }
 
     @Override
-    public ServerResponse invoke() {
-        ServerInitializer.getCollectionManager().add(person);
-        return new ServerResponseMessage("Added the new Person to the collection");
+    public Boolean invoke() {
+        try {
+            ServerInitializer.getCollectionManager().add(person);
+            return true;
+        } catch (FailedToInvokeCommandException ex) {
+            return false;
+        }
     }
 
     public static Class<?>[] getConstuctorClasses() { return new Class<?>[] { Person.class }; }

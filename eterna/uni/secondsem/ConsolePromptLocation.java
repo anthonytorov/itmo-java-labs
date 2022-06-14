@@ -55,10 +55,10 @@ public class ConsolePromptLocation {
             height++;
         }
         catch (NumberFormatException nfex) {
-            LogPrinter.log(nfex.getMessage());
+            LogPrinter.log("Invalid input! - " + nfex.getMessage());
         } 
         catch (IllegalArgumentException iaex) {
-            LogPrinter.log(iaex.getMessage());
+            LogPrinter.log("Invalid input! - " + iaex.getMessage());
         }
 
         if (height == STOP_HEIGHT) {

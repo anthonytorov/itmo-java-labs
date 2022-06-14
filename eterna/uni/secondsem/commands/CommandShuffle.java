@@ -1,15 +1,19 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.networking.ServerResponse;
-import eterna.uni.secondsem.networking.ServerResponseMessage;
+import eterna.uni.secondsem.FailedToInvokeCommandException;
 import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandShuffle extends Command {
 
     @Override
-    public ServerResponse invoke() {
-        ServerInitializer.getCollectionManager().shuffle();
-        return new ServerResponseMessage("Shuffled collection.");
+    public Boolean invoke() {
+        try {
+            ServerInitializer.getCollectionManager().shuffle();
+            return (Boolean)true;
+        } catch (FailedToInvokeCommandException ex) {
+            ex.printStackTrace();
+            return (Boolean)false;
+        }
     }
 
     public static Class<?>[] getConstuctorClasses() {

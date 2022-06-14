@@ -1,13 +1,11 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.networking.ServerResponse;
-import eterna.uni.secondsem.networking.ServerResponseMessage;
-import eterna.uni.secondsem.server.ServerInitializer;
+import java.io.Serializable;
 
 public class CommandExit extends Command {
 
     @Override
-    public ServerResponse invoke() { ServerInitializer.exit(); return new ServerResponseMessage("Shutting down..."); }
+    public Serializable invoke() { return null; }
 
     public static Class<?>[] getConstuctorClasses() {
         return new Class<?>[0];

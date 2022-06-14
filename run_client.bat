@@ -1,2 +1,3 @@
-java -Xdiag -jar Lab6.jar "client" "localhost" 52031
+set /p PORT="Enter port: "
+java -Xdiag -jar Lab7/Lab7.jar "client" "localhost" %PORT%
 pause

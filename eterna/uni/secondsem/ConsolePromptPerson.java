@@ -18,7 +18,7 @@ public class ConsolePromptPerson {
     private static final int STOP_HEIGHT = 7;
 
     public static Person readFromScanner (Scanner inputScanner, boolean printPrompts) {
-        Person person = new Person("", new Coordinates(), 0, Country.ITALY, new Location(0f, 0d, 0d, "Unnamed"));
+        Person person = new Person("", new Coordinates(0,0), 0, Country.ITALY, new Location(0f, 0d, 0d, "Unnamed"));
         height = 0;
 
         do {

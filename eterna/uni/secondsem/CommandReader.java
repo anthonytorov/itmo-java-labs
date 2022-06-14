@@ -108,10 +108,9 @@ public class CommandReader {
         registerCommand("add", CommandAdd.class);
         registerCommand("update", CommandUpdate.class);
         registerCommand("remove_by_id", CommandRemove.class);
-        registerCommand("clear", CommandClear.class);
-        registerCommand("save", CommandSave.class);
-        registerCommand("execute_script", CommandExecuteScript.class);
         registerCommand("exit", CommandExit.class);
+        registerCommand("clear", CommandClear.class);
+        registerCommand("execute_script", CommandExecuteScript.class);
         registerCommand("add_if_max", CommandAddIfMax.class);
         registerCommand("add_if_min", CommandAddIfMin.class);
         registerCommand("shuffle", CommandShuffle.class);

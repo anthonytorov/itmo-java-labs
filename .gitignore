@@ -24,3 +24,8 @@ hs_err_pid*
 
 # The saved collection
 *.csv
+
+# Other stuff GitHub users rather not see
+*.properties
+heliosconnect.bat
+heliosupload.bat

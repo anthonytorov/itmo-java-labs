@@ -5,18 +5,24 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.channels.SocketChannel;
 
+import eterna.uni.secondsem.FailedToInitializeException;
+
 public class ClientObjectSerializer {
     private SocketChannel _socketChannel;
-    private ObjectInputStream _inStream;
-    private ObjectOutputStream _outStream;
+    private final ObjectInputStream _inStream;
+    private final ObjectOutputStream _outStream;
 
-    public ClientObjectSerializer(SocketChannel socketChannel) {
+    public ClientObjectSerializer(SocketChannel socketChannel) throws FailedToInitializeException {
         _socketChannel = socketChannel;
         try {
-            _inStream = new ObjectInputStream(_socketChannel.socket().getInputStream());
+            // Create an output stream
             _outStream = new ObjectOutputStream(socketChannel.socket().getOutputStream());
+            _outStream.flush();
+
+            // Wait for output to open on the server
+            _inStream = new ObjectInputStream(_socketChannel.socket().getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FailedToInitializeException(e);
         }
     }
     

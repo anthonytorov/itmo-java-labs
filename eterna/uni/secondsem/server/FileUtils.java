@@ -41,13 +41,7 @@ public class FileUtils {
      * @return a Scanner instance if successful, otherwise null 
      */
     public static FileInputStream openFileInputStream(String path, boolean createIfDoesntExist) throws IOException {
-        try {
-            return new FileInputStream(Paths.get(System.getProperty("user.dir"), path).toString());
-        } catch (SecurityException securityException) {
-            LogPrinter.log("A security exception occurred while writing to " + path);
-        }
-
-        return null;
+        return new FileInputStream(Paths.get(System.getProperty("user.dir"), path).toString());
     }
 
     /**

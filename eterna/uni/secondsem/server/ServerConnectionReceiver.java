@@ -22,12 +22,12 @@ public class ServerConnectionReceiver {
         }
     }
 
-    public ServerObjectSerializer waitForConnection() {
+    public Socket waitForConnection() {
         try {
             LogPrinter.log("Waiting for client...");
             Socket clientSocket = _serverSocket.accept();
             LogPrinter.log("Accepted client " + clientSocket.getRemoteSocketAddress());
-            return new ServerObjectSerializer(clientSocket);
+            return clientSocket;
         } catch (IOException ioex) {
             ioex.printStackTrace();
         }

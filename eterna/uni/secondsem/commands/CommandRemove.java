@@ -1,8 +1,5 @@
 package eterna.uni.secondsem.commands;
 
-import eterna.uni.secondsem.networking.ServerResponse;
-import eterna.uni.secondsem.networking.ServerResponseMessage;
-import eterna.uni.secondsem.server.CollectionManager;
 import eterna.uni.secondsem.server.ServerInitializer;
 
 public class CommandRemove extends Command {
@@ -14,12 +11,11 @@ public class CommandRemove extends Command {
     }
 
     @Override
-    public ServerResponse invoke() {
-        CollectionManager collectionManager = ServerInitializer.getCollectionManager();
-        if (collectionManager.remove(id)) {
-            return new ServerResponseMessage("Removed entry with id " + id);
+    public Integer invoke() {
+        if (ServerInitializer.getCollectionManager().remove(id)) {
+            return id;
         } else {
-            return new ServerResponseMessage("Entry with ID " + id + " is missing from the collection");
+            return -1;
         }
     }
 

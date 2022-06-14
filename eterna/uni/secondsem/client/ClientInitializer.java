@@ -6,12 +6,11 @@ import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 
 import eterna.uni.secondsem.CommandReader;
+import eterna.uni.secondsem.FailedToInitializeException;
 import eterna.uni.secondsem.LogPrinter;
 import eterna.uni.secondsem.commands.Command;
 import eterna.uni.secondsem.commands.CommandExit;
-import eterna.uni.secondsem.commands.CommandSave;
 import eterna.uni.secondsem.networking.NetworkSettings;
-import eterna.uni.secondsem.networking.ServerResponse;
 
 public class ClientInitializer {
     private static ClientInitializer instance;
@@ -41,7 +40,6 @@ public class ClientInitializer {
     }
 
     private void executionLoop() {
-
         run = true;
         LogPrinter.log("Attempting connection to " + NetworkSettings.get_address() + ":" + NetworkSettings.get_port());
 
@@ -50,24 +48,30 @@ public class ClientInitializer {
             LogPrinter.log("Failed to connect.");
             return;
         }
-        ClientObjectSerializer noe = new ClientObjectSerializer(socketChannel);
         LogPrinter.log("Connection successful.");
 
-        while (run && commandReader.canReadNextCommand()) {
+        try {
+            ClientObjectSerializer noe = new ClientObjectSerializer(socketChannel);
 
-            Command command = commandReader.readCommand();
-
-            if (command == null || command.getClass() == CommandSave.class) {
-                LogPrinter.log("Command not recognised. Use \"help\" to see available commands.");
-            } else if (command.getClass() == CommandExit.class) {
-                run = false;
-            } else {
-                noe.pushObject(command);
-                ((ServerResponse)noe.readResponse()).execute();
+            while (run && commandReader.canReadNextCommand()) {
+    
+                Command command = commandReader.readCommand();
+    
+                if (command == null) {
+                    LogPrinter.log("Command not recognised. Use \"help\" to see available commands.");
+                } else if (command.getClass() == CommandExit.class) {
+                    run = false;
+                } else {
+                    noe.pushObject(command);
+                    Object response = noe.readResponse();
+                    ClientResponseHandler.handleResponse(command.getClass().getName(), response);
+                }
             }
+    
+            noe.closeSocket();
+        } catch (FailedToInitializeException e) {
+            return;
         }
-
-        noe.closeSocket();
     }
 
     private SocketChannel attemptConnection(int height) {

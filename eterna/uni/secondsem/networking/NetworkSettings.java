@@ -6,9 +6,6 @@ import java.net.UnknownHostException;
 public class NetworkSettings {
     
     public static NetworkSettings main;
-    public static void initialize_localhost() throws UnknownHostException {
-        main = new NetworkSettings(InetAddress.getLocalHost(), 3819, 8096);
-    }
     public static void initialize(String _ipV4String, int _port, int _bufferSize) throws UnknownHostException {
         main = new NetworkSettings(convertFromString(_ipV4String), _port, _bufferSize);
     }

@@ -1,10 +1,8 @@
 package eterna.uni.secondsem;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Scanner;
 
-public class Coordinates implements CSVFormattable, Serializable {
+public class Coordinates implements Serializable {
     /**
      * Must be larger than -21.
      */
@@ -28,21 +26,9 @@ public class Coordinates implements CSVFormattable, Serializable {
         y = value;
     }
 
-    @Override
-    public void readFromCSVLine(Scanner csvScanner) throws IOException {
-        try {
-            set_x(csvScanner.nextInt());
-            set_y(csvScanner.nextFloat());
-        } catch (NullPointerException npex) {
-            throw new IOException(npex);
-        } catch (IllegalArgumentException iaex) {
-            throw new IOException(iaex);
-        }
-    }
-
-    @Override
-    public String toCSVString() {
-        return x + "," + y;
+    public Coordinates(int x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
     @Override

@@ -1,8 +1,7 @@
 package eterna.uni.secondsem.commands;
 
+import eterna.uni.secondsem.FailedToInvokeCommandException;
 import eterna.uni.secondsem.Person;
-import eterna.uni.secondsem.networking.ServerResponse;
-import eterna.uni.secondsem.networking.ServerResponseMessage;
 import eterna.uni.secondsem.server.CollectionManager;
 import eterna.uni.secondsem.server.ServerInitializer;
 
@@ -15,15 +14,18 @@ public class CommandAddIfMin extends Command {
     }
 
     @Override
-    public ServerResponse invoke() {
+    public Boolean invoke() {
         CollectionManager collectionManager = ServerInitializer.getCollectionManager();
         int comparison = collectionManager.compareToCollectionBounds(person);
         if (comparison < 0) {
-            collectionManager.add(person);
-            return new ServerResponseMessage("Successfully added the new person to the collection");
-        } else {
-            return new ServerResponseMessage("Failed to add person to the collection");
+            try {
+                collectionManager.add(person);
+                return true;
+            } catch (FailedToInvokeCommandException ex) {
+                return false;
+            }
         }
+        return false;
     }
 
     public static Class<?>[] getConstuctorClasses() {
